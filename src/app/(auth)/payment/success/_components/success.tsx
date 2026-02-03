@@ -10,24 +10,24 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function PaymentSuccess() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get("order_id");
+  // const searchParams = useSearchParams();
+  // const orderId = searchParams.get("order_id");
 
-  const supabase = createClient();
+  // const supabase = createClient();
 
-  const { mutate } = useMutation({
-    mutationKey: ["mutateUpdateStatusOrder"],
-    mutationFn: async () => {
-      await supabase
-        .from("orders")
-        .update({ status: ORDER_STATUS.PAID })
-        .eq("order_id", orderId);
-    },
-  });
+  // const { mutate } = useMutation({
+  //   mutationKey: ["mutateUpdateStatusOrder"],
+  //   mutationFn: async () => {
+  //     await supabase
+  //       .from("orders")
+  //       .update({ status: ORDER_STATUS.PAID })
+  //       .eq("order_id", orderId);
+  //   },
+  // });
 
-  useEffect(() => {
-    mutate();
-  }, [mutate]);
+  // useEffect(() => {
+  //   mutate();
+  // }, [mutate]);
 
   return (
     <div className="flex h-screen items-center justify-center">
