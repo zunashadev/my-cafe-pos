@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { ORDER_STATUS } from "@/features/order/constants";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(req: Request) {
   const payload = await req.json();
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   const { order_id, transaction_status, gross_amount } = payload;
 
   if (transaction_status === "settlement") {
-    const supabase = await createClient();
+    const supabase = await createAdminClient();
 
     await supabase
       .from("orders")
