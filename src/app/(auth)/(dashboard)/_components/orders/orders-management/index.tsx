@@ -29,8 +29,13 @@ import OrdersManagementToolbar from "./toolbar";
 import { updateOrderStatus } from "@/features/order/actions";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/features/auth/stores";
+import { USER_ROLE } from "@/features/auth/constants";
 
 export default function OrdersManagement() {
+  // 🔹 Stores
+  const profile = useAuthStore((s) => s.profile);
+
   // 🔹 UI States
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(LIMIT_OPTIONS[1]);
@@ -132,7 +137,15 @@ export default function OrdersManagement() {
   const router = useRouter();
 
   const handleViewDetail = (order: Order) => {
-    router.push(`/admin/orders/${order.order_id}`);
+    if (profile && profile.role === USER_ROLE.ADMIN) {
+      router.push(`/admin/orders/${order.order_id}`);
+    }
+    if (profile && profile.role === USER_ROLE.CASHIER) {
+      router.push(`/cashier/orders/${order.order_id}`);
+    }
+    if (profile && profile.role === USER_ROLE.KITCHEN) {
+      router.push(`/kitchen/orders/${order.order_id}`);
+    }
   };
 
   return (
@@ -157,6 +170,7 @@ export default function OrdersManagement() {
         <DataTable
           data={ordersWithSummary}
           columns={tableColumns({
+            userRole: profile?.role,
             onUpdateOrderStatus: handleUpdateOrderStatus,
             onViewDetail: handleViewDetail,
           })}

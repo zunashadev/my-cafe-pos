@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CardMenuSkeleton() {
   return (
-    <Card className="h-fit w-full gap-0 border p-0 shadow-sm">
+    <Card className="h-fit w-full gap-0 border p-0 shadow-none">
       <Skeleton className="aspect-square w-full" />
       <CardContent className="space-y-2 px-4 py-2">
         <Skeleton className="h-5 w-1/2" />

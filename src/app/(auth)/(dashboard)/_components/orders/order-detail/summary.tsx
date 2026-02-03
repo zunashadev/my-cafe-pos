@@ -3,7 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
+import { USER_ROLE } from "@/features/auth/constants";
+import { useAuthStore } from "@/features/auth/stores";
 import { generatePayment } from "@/features/order/actions";
 import {
   INITIAL_STATE_GENERATE_PAYMENT,
@@ -26,7 +27,8 @@ export default function Summary({
   orderMenu?: OrderMenuWithMenu[];
   order_id?: string;
 }) {
-  console.log(order);
+  // 🔹 Stores
+  const profile = useAuthStore((s) => s.profile);
 
   const { grandTotal, totalPrice, tax, service } = usePricing(orderMenu);
 
@@ -104,20 +106,22 @@ export default function Summary({
             <p className="text-sm">{formatRupiah(grandTotal)}</p>
           </div>
 
-          {order?.status === ORDER_STATUS.SERVED && (
-            <Button
-              type="submit"
-              onClick={handleGeneratePayment}
-              disabled={!isAllServed || generatePaymentIsPending}
-              className="w-full cursor-pointer bg-amber-500 font-semibold text-white hover:bg-amber-600"
-            >
-              {generatePaymentIsPending ? (
-                <Loader2Icon className="animate-spin" />
-              ) : (
-                "Pay"
-              )}
-            </Button>
-          )}
+          {profile &&
+            profile.role !== USER_ROLE.KITCHEN &&
+            order?.status === ORDER_STATUS.SERVED && (
+              <Button
+                type="submit"
+                onClick={handleGeneratePayment}
+                disabled={!isAllServed || generatePaymentIsPending}
+                className="w-full cursor-pointer bg-amber-500 font-semibold text-white hover:bg-amber-600"
+              >
+                {generatePaymentIsPending ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  "Pay"
+                )}
+              </Button>
+            )}
         </div>
       </CardContent>
     </Card>

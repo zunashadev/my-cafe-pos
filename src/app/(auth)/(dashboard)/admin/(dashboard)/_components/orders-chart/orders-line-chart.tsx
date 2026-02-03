@@ -29,7 +29,13 @@ export function OrdersLineChart({ data }: OrdersChartProps) {
 
         <ChartTooltip content={<ChartTooltipContent />} />
 
-        <Line dataKey="total" type="monotone" strokeWidth={2} dot={false} />
+        <Line
+          dataKey="total"
+          type="monotone"
+          strokeWidth={2}
+          dot={false}
+          stroke="var(--color-total)"
+        />
       </LineChart>
     </ChartContainer>
   );

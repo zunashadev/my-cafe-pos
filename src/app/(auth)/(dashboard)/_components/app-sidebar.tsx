@@ -16,7 +16,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -33,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { EllipsisVertical, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import CoffeeCupIcon from "@/assets/icons/coffee-cup.svg";
 
 export default function AppSidebar() {
   const { isMobile } = useSidebar();
@@ -44,13 +44,17 @@ export default function AppSidebar() {
   return (
     <Sidebar variant="inset" collapsible="offcanvas">
       {/* Start : Sidebar Header */}
-      <SidebarHeader></SidebarHeader>
+      <SidebarHeader>
+        <div className="flex items-center gap-1 py-4">
+          <CoffeeCupIcon className="size-8 text-amber-500" />
+          <h1 className="text-lg font-medium text-amber-500">MyCafe POS</h1>
+        </div>
+      </SidebarHeader>
       {/* End : Sidebar Header */}
 
       {/* Start : Sidebar Content */}
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Group 1</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {SIDEBAR_MENU_LIST[profile?.role as SidebarMenuKey]?.map(
@@ -60,7 +64,7 @@ export default function AppSidebar() {
                       <Link
                         href={item.url}
                         className={cn(`h-auto px-4 py-3`, {
-                          "bg-amber-500 text-white hover:bg-amber-500 hover:text-white":
+                          "border border-amber-500 bg-amber-500/10 font-medium text-amber-600 hover:bg-amber-600! hover:text-white":
                             pathname === item.url,
                         })}
                       >

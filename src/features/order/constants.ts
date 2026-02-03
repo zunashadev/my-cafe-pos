@@ -24,7 +24,6 @@ export const ORDER_MENU_STATUS = {
 export const INITIAL_CREATE_ORDER_FORM = {
   customer_name: "",
   table_id: "",
-  status: "",
 };
 
 export const INITIAL_STATE_CREATE_ORDER_FORM = {
@@ -32,7 +31,6 @@ export const INITIAL_STATE_CREATE_ORDER_FORM = {
   errors: {
     customer_name: [],
     table_id: [],
-    status: [],
     _form: [],
   },
 };

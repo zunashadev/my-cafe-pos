@@ -1,3 +1,10 @@
+// 🔹 USER ROLE
+export const USER_ROLE = {
+  ADMIN: "admin",
+  CASHIER: "cashier",
+  KITCHEN: "kitchen",
+} as const;
+
 // 🔹 ROLE OPTIONS
 export const ROLE_OPTIONS = [
   { label: "Admin", value: "admin" },

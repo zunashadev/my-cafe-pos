@@ -17,6 +17,8 @@ import { useState } from "react";
 import { OrderStatus } from "@/features/order/types";
 import { ORDER_STATUS } from "@/features/order/constants";
 import CreateOrderDialog from "./dialog/create-order-dialog";
+import { useAuthStore } from "@/features/auth/stores";
+import { USER_ROLE } from "@/features/auth/constants";
 
 export default function OrdersManagementToolbar({
   search,
@@ -29,6 +31,9 @@ export default function OrdersManagementToolbar({
   statusFilter: OrderStatus | null;
   onStatusFilterChange: (value: OrderStatus | null) => void;
 }) {
+  // 🔹 Stores
+  const profile = useAuthStore((s) => s.profile);
+
   // 🔹 Create Order Dialog
   const [openCreateOrder, setOpenCreateOrder] = useState(false);
 
@@ -61,23 +66,6 @@ export default function OrdersManagementToolbar({
             </SelectContent>
           </Select>
         </div>
-
-        {/* Capacity Filter */}
-        {/* <div className="flex items-center gap-2">
-          <span>Capacity</span>
-          <Input
-            type="number"
-            min={1}
-            placeholder="All Capacity"
-            value={capacityFilter ?? ""}
-            onChange={(e) =>
-              onCapacityFilterChange(
-                e.target.value ? Number(e.target.value) : null,
-              )
-            }
-            className="w-32"
-          />
-        </div> */}
       </div>
 
       <div className="flex items-center gap-4">
@@ -92,16 +80,18 @@ export default function OrdersManagementToolbar({
           </InputGroupAddon>
         </InputGroup>
 
-        <div>
-          <Button onClick={() => setOpenCreateOrder(true)}>
-            <PlusIcon />
-            Create Order
-          </Button>
-          <CreateOrderDialog
-            open={openCreateOrder}
-            onOpenChange={setOpenCreateOrder}
-          />
-        </div>
+        {profile && profile?.role !== USER_ROLE.KITCHEN && (
+          <div>
+            <Button onClick={() => setOpenCreateOrder(true)}>
+              <PlusIcon />
+              Create Order
+            </Button>
+            <CreateOrderDialog
+              open={openCreateOrder}
+              onOpenChange={setOpenCreateOrder}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

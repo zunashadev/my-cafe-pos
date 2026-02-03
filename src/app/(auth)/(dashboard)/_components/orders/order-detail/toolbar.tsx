@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
@@ -13,14 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TABLE_STATUS } from "@/features/table/constants";
-import { TableStatus } from "@/features/table/types";
 import { PlusIcon, SearchIcon } from "lucide-react";
-import { useState } from "react";
 import Link from "next/link";
 import { OrderMenuStatus } from "@/features/order/types";
 import { ORDER_MENU_STATUS } from "@/features/order/constants";
-import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/features/auth/stores";
+import { USER_ROLE } from "@/features/auth/constants";
 // import CreateMenuDialog from "./dialog/create-menu-dialog";
 // import CreateUserDialog from "./dialog/create-user-dialog";
 
@@ -39,6 +36,17 @@ export default function OrderDetailToolbar({
   onStatusFilterChange: (value: OrderMenuStatus | null) => void;
   refetch: () => void;
 }) {
+  // 🔹 Stores
+  const profile = useAuthStore((s) => s.profile);
+  const role = profile?.role;
+
+  const ORDER_ADD_PATH_BY_ROLE: Partial<Record<string, string>> = {
+    [USER_ROLE.ADMIN]: `/admin/orders/${order_id}/add`,
+    [USER_ROLE.CASHIER]: `/cashier/orders/${order_id}/add`,
+  };
+
+  const addOrderMenuPath = role ? ORDER_ADD_PATH_BY_ROLE[role] : undefined;
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -82,14 +90,16 @@ export default function OrderDetailToolbar({
           </InputGroupAddon>
         </InputGroup>
 
-        <div>
-          <Link href={`/admin/orders/${order_id}/add`}>
-            <Button>
-              <PlusIcon />
-              Add Order Menu
-            </Button>
-          </Link>
-        </div>
+        {addOrderMenuPath && role !== USER_ROLE.KITCHEN && (
+          <div>
+            <Link href={addOrderMenuPath}>
+              <Button>
+                <PlusIcon />
+                Add Order Menu
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

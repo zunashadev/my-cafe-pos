@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Menu } from "@/features/menu/types";
 import { formatRupiah } from "@/lib/utils";
-import { ShoppingCart, ShoppingCartIcon } from "lucide-react";
+import { ShoppingCartIcon } from "lucide-react";
 import Image from "next/image";
 
 export default function CardMenu({
@@ -13,7 +13,7 @@ export default function CardMenu({
   onAddToCart: (item: Menu, type: "decrement" | "increment") => void;
 }) {
   return (
-    <Card className="h-fit w-full gap-0 overflow-hidden rounded-lg border p-0 shadow-sm">
+    <Card className="h-fit w-full gap-0 overflow-hidden rounded-lg border p-0 shadow-none">
       <Image
         src={menu.image_url as string}
         alt={menu.name as string}

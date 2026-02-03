@@ -13,11 +13,12 @@ import { createClient } from "@/lib/supabase/server";
 import { TABLE_STATUS } from "../table/constants";
 import { FormState } from "@/types/general";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
-import { CartItem, OrderMenuStatus, OrderStatus } from "./types";
+import { OrderMenuStatus, OrderStatus } from "./types";
 import { redirect } from "next/navigation";
 import midtrans from "midtrans-client";
 import { environment } from "@/config/environment";
-import { error } from "console";
+import { cookies } from "next/headers";
+import { USER_ROLE } from "../auth/constants";
 
 // 🔹 Create Order
 export async function createOrder(
@@ -31,7 +32,6 @@ export async function createOrder(
   const validatedFields = createOrderSchema.safeParse({
     customer_name: formData.get("customer_name"),
     table_id: formData.get("table_id"),
-    status: formData.get("status"),
   });
 
   if (!validatedFields.success) {
@@ -42,7 +42,6 @@ export async function createOrder(
       errors: {
         customer_name: fieldErrors.customer_name ?? [],
         table_id: fieldErrors.table_id ?? [],
-        status: fieldErrors.status ?? [],
         _form: [],
       },
     };
@@ -59,17 +58,12 @@ export async function createOrder(
       order_id: orderId,
       customer_name: validatedFields.data.customer_name,
       table_id: validatedFields.data.table_id,
-      status: validatedFields.data.status,
+      status: ORDER_STATUS.DRAFT,
     }),
     supabase
       .from("tables")
       .update({
-        status:
-          validatedFields.data.status === ORDER_STATUS.DRAFT
-            ? TABLE_STATUS.RESERVED
-            : validatedFields.data.status === ORDER_STATUS.PAID
-              ? TABLE_STATUS.OCCUPIED
-              : TABLE_STATUS.AVAILABLE,
+        status: TABLE_STATUS.RESERVED,
       })
       .eq("id", validatedFields.data.table_id),
   ]);
@@ -198,7 +192,19 @@ export async function addOrderMenu(prevState: FormState, formData: FormData) {
     };
   }
 
-  redirect(`/admin/orders/${order_id}`);
+  const cookieStore = await cookies();
+  const profileCookie = cookieStore.get("user_profile");
+  const profile = profileCookie ? JSON.parse(profileCookie.value) : null;
+
+  let redirectPath = `/orders/${order_id}`;
+
+  if (profile.role === USER_ROLE.ADMIN) {
+    redirectPath = `/admin/orders/${order_id}`;
+  } else if (profile.role === USER_ROLE.CASHIER) {
+    redirectPath = `/cashier/orders/${order_id}`;
+  }
+
+  redirect(redirectPath);
 }
 
 // 🔹 Update Order Menu Status
@@ -236,26 +242,61 @@ export async function updateOrderMenuStatus(
   const supabase = await createClient();
 
   // 🔹 Update Order Menu Status
-  const { error } = await supabase
+  const { data: updatedMenu, error: updateError } = await supabase
     .from("orders_menus")
     .update({
       status,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select("order_id")
+    .single();
 
-  if (error) {
+  if (updateError) {
     return {
       status: "error",
       errors: {
         ...prevState.errors,
-        _form: [error.message],
+        _form: [updateError.message],
       },
     };
   }
 
-  return {
-    status: "success",
-  };
+  // 🔹 Hanya lanjut jika status = served
+  if (status !== ORDER_MENU_STATUS.SERVED) {
+    return { status: "success" };
+  }
+
+  // 🔹 Ambil Semua Menu di Order tersebut
+  const { data: menus, error: menusError } = await supabase
+    .from("orders_menus")
+    .select("status")
+    .eq("order_id", updatedMenu.order_id);
+
+  if (menusError || !menus) {
+    return {
+      status: "error",
+      errors: {
+        _form: [menusError?.message ?? "Failed to fetch menus"],
+      },
+    };
+  }
+
+  // 🔹 Cek Apakah Semua 'Served'
+  const allServed = menus.every(
+    (menu) => menu.status === ORDER_MENU_STATUS.SERVED,
+  );
+
+  if (!allServed) {
+    return { status: "success" }; // tetap return success karena update status menu berhasil
+  }
+
+  // 🔹 Update order status → served
+  await supabase
+    .from("orders")
+    .update({ status: ORDER_STATUS.SERVED })
+    .eq("order_id", updatedMenu.order_id);
+
+  return { status: "success" };
 }
 
 // 🔹 Generate Payment

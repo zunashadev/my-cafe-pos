@@ -9,11 +9,15 @@ import {
 } from "@/features/order/types";
 import { ORDER_STATUS } from "@/features/order/constants";
 import { Separator } from "@/components/ui/separator";
+import { UserRole } from "@/features/auth/types";
+import { USER_ROLE } from "@/features/auth/constants";
 
 export function tableColumns({
+  userRole,
   onUpdateOrderStatus,
   onViewDetail,
 }: {
+  userRole: UserRole | undefined;
   onUpdateOrderStatus: (order: Order, nextStatus: OrderStatus) => void;
   onViewDetail: (order: Order) => void;
 }): ColumnDef<OrderWithTableAndSummary>[] {
@@ -147,47 +151,60 @@ export function tableColumns({
       cell: ({ row }) => {
         const order = row.original;
 
+        const actions = [];
+
+        // Confirm
+        if (userRole !== USER_ROLE.KITCHEN) {
+          actions.push({
+            label: "Confirm",
+            icon: <PencilIcon className="size-4" />,
+            onClick: () => onUpdateOrderStatus(order, ORDER_STATUS.CONFIRMED),
+            hidden: () => order.status !== ORDER_STATUS.DRAFT,
+          });
+        }
+
+        // Served
+        if (userRole !== USER_ROLE.KITCHEN) {
+          actions.push({
+            label: "Served",
+            icon: <PencilIcon className="size-4" />,
+            onClick: () => onUpdateOrderStatus(order, ORDER_STATUS.SERVED),
+            hidden: () => order.status !== ORDER_STATUS.CONFIRMED,
+          });
+        }
+
+        // Paid
+        if (userRole !== USER_ROLE.KITCHEN) {
+          actions.push({
+            label: "Paid",
+            icon: <PencilIcon className="size-4" />,
+            onClick: () => onUpdateOrderStatus(order, ORDER_STATUS.PAID),
+            hidden: () => order.status !== ORDER_STATUS.SERVED,
+          });
+        }
+
+        // Cancel
+        if (userRole !== USER_ROLE.KITCHEN) {
+          actions.push({
+            label: "Cancel",
+            icon: <Trash2Icon className="size-4" />,
+            onClick: () => onUpdateOrderStatus(order, ORDER_STATUS.CANCELLED),
+            hidden: () =>
+              order.status !== ORDER_STATUS.DRAFT &&
+              order.status !== ORDER_STATUS.CONFIRMED,
+          });
+        }
+
+        // Detail
+        actions.push({
+          label: "Detail",
+          icon: <ViewIcon className="size-4" />,
+          onClick: () => onViewDetail(order),
+        });
+
         return (
           <div className="flex justify-center">
-            <DataTableDropdownAction
-              row={order}
-              actions={[
-                {
-                  label: "Confirm",
-                  icon: <PencilIcon className="size-4" />,
-                  onClick: () =>
-                    onUpdateOrderStatus(order, ORDER_STATUS.CONFIRMED),
-                  hidden: () => order.status !== ORDER_STATUS.DRAFT,
-                },
-                {
-                  label: "Served",
-                  icon: <PencilIcon className="size-4" />,
-                  onClick: () =>
-                    onUpdateOrderStatus(order, ORDER_STATUS.SERVED),
-                  hidden: () => order.status !== ORDER_STATUS.CONFIRMED,
-                },
-                {
-                  label: "Paid",
-                  icon: <PencilIcon className="size-4" />,
-                  onClick: () => onUpdateOrderStatus(order, ORDER_STATUS.PAID),
-                  hidden: () => order.status !== ORDER_STATUS.SERVED,
-                },
-                {
-                  label: "Cancel",
-                  icon: <Trash2Icon className="size-4" />,
-                  onClick: () =>
-                    onUpdateOrderStatus(order, ORDER_STATUS.CANCELLED),
-                  hidden: () =>
-                    order.status !== ORDER_STATUS.DRAFT &&
-                    order.status !== ORDER_STATUS.CONFIRMED,
-                },
-                {
-                  label: "Detail",
-                  icon: <ViewIcon className="size-4" />,
-                  onClick: () => onViewDetail(order),
-                },
-              ]}
-            />
+            <DataTableDropdownAction row={order} actions={actions} />
           </div>
         );
       },

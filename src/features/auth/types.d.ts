@@ -1,8 +1,13 @@
+import { USER_ROLE } from "./constants";
+
+// 🔹 User Role -> get from constant
+export type UserRole = (typeof USER_ROLE)[keyof typeof USER_ROLE];
+
 // 🔹 Profile
 export type Profile = {
   id?: string;
   name?: string;
-  role?: string;
+  role?: UserRole;
   avatar_url?: string;
 };
 

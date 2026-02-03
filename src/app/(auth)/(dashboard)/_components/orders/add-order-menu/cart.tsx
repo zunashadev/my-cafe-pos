@@ -5,7 +5,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Menu } from "@/features/menu/types";
 import { CartItem, OrderWithTable } from "@/features/order/types";
-import { useDebounce } from "@/hooks/use-debounce";
 import { formatRupiah } from "@/lib/utils";
 import { Loader2Icon } from "lucide-react";
 import Image from "next/image";

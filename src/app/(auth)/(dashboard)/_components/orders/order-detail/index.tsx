@@ -4,7 +4,12 @@ import { startTransition, useActionState, useEffect, useState } from "react";
 import OrderDetailToolbar from "./toolbar";
 import { LIMIT_OPTIONS } from "@/constants/data-table-constant";
 import { OrderMenuStatus, OrderMenuWithMenu } from "@/features/order/types";
-import { useOrder, useOrderMenus } from "@/features/order/hooks";
+import {
+  useOrder,
+  useOrderMenus,
+  useOrderMenusRealtime,
+  useOrderRealtime,
+} from "@/features/order/hooks";
 import { toast } from "sonner";
 import DataTable from "@/components/shared/data-table/data-table";
 import { tableColumns } from "./table-columns";
@@ -12,7 +17,6 @@ import DataTablePagination from "@/components/shared/data-table/data-table-pagin
 import Summary from "./summary";
 import { updateOrderMenuStatus } from "@/features/order/actions";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function OrderDetail({ order_id }: { order_id: string }) {
   // 🔹 Fetch Order Detail from DB
@@ -23,6 +27,8 @@ export default function OrderDetail({ order_id }: { order_id: string }) {
     error: orderError,
     refetch: orderRefetch,
   } = useOrder(order_id);
+
+  useOrderRealtime(orderRefetch);
 
   // 🔹 Toast Error for Fetch Order Detail
   useEffect(() => {
@@ -54,6 +60,8 @@ export default function OrderDetail({ order_id }: { order_id: string }) {
     search: orderMenusSearch,
     status: orderMenusStatus,
   });
+
+  useOrderMenusRealtime(orderMenusRefetch);
 
   // 🔹 Toast Error for Fetch Order Menus
   useEffect(() => {

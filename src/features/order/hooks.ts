@@ -72,6 +72,32 @@ export function useOrder(order_id: string) {
   });
 }
 
+// 🔹 Use Order - Realtime
+export function useOrderRealtime(onChange: () => void) {
+  useEffect(() => {
+    const supabase = createClient();
+
+    const channel = supabase
+      .channel("order-realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "orders",
+        },
+        () => {
+          onChange();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [onChange]);
+}
+
 // 🔹 Use Order Menus
 export function useOrderMenus({
   order_id,
@@ -93,6 +119,32 @@ export function useOrderMenus({
     placeholderData: (previousData) => previousData,
     enabled: !!order_id,
   });
+}
+
+// 🔹 Use Order Menus - Realtime
+export function useOrderMenusRealtime(onChange: () => void) {
+  useEffect(() => {
+    const supabase = createClient();
+
+    const channel = supabase
+      .channel("order-menus-realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "orders_menus",
+        },
+        () => {
+          onChange();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [onChange]);
 }
 
 // 🔹 Use Orders Menus Summary

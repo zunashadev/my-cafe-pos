@@ -1,16 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { PencilIcon, Trash2Icon, ViewIcon } from "lucide-react";
+import { PencilIcon, Trash2Icon } from "lucide-react";
 import DataTableDropdownAction from "@/components/shared/data-table/data-table-dropdown-action";
 import { cn, formatRupiah } from "@/lib/utils";
-import {
-  Order,
-  OrderMenu,
-  OrderMenuStatus,
-  OrderMenuWithMenu,
-  OrderStatus,
-  OrderWithTable,
-} from "@/features/order/types";
-import { ORDER_MENU_STATUS, ORDER_STATUS } from "@/features/order/constants";
+import { OrderMenuStatus, OrderMenuWithMenu } from "@/features/order/types";
+import { ORDER_MENU_STATUS } from "@/features/order/constants";
 import Image from "next/image";
 
 export function tableColumns({

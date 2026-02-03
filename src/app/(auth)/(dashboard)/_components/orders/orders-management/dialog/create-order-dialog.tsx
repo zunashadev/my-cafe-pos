@@ -78,7 +78,6 @@ export default function CreateOrderDialog({
 
     formData.append("customer_name", data.customer_name);
     formData.append("table_id", data.table_id);
-    formData.append("status", data.status);
 
     startTransition(() => {
       createOrderAction(formData);
@@ -179,44 +178,6 @@ export default function CreateOrderDialog({
                                   {table.status}
                                 </span>
                               </span>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              {/* Status */}
-              <Controller
-                name="status"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Status</FieldLabel>
-                    <Select
-                      name={field.name}
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      disabled={createOrderIsPending}
-                    >
-                      <SelectTrigger
-                        id={field.name}
-                        aria-invalid={fieldState.invalid}
-                        className="min-w-[120px]"
-                      >
-                        <SelectValue placeholder="Select status here..." />
-                      </SelectTrigger>
-                      <SelectContent position="popper">
-                        <SelectGroup>
-                          <SelectLabel>Status</SelectLabel>
-                          {Object.values(ORDER_STATUS).map((status) => (
-                            <SelectItem key={status} value={status}>
-                              <span className="capitalize">{status}</span>
                             </SelectItem>
                           ))}
                         </SelectGroup>

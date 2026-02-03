@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
 import { requireAuth } from "./require-auth";
+import { UserRole } from "@/features/auth/types";
 
-type Role = "admin" | "cashier" | "kitchen";
-
-export async function requireRole(allowedRoles: Role[]) {
+export async function requireRole(allowedRoles: UserRole[]) {
   const { supabase, user } = await requireAuth();
 
   const { data: profile, error } = await supabase
