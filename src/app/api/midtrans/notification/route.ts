@@ -5,6 +5,8 @@ import { ORDER_STATUS } from "@/features/order/constants";
 export async function POST(req: Request) {
   const payload = await req.json();
 
+  console.log("MIDTRANS PAYLOAD:", payload);
+
   const { order_id, transaction_status, gross_amount } = payload;
 
   // (nanti WAJIB tambah verifikasi signature)
