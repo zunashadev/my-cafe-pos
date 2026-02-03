@@ -48,6 +48,11 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
+  // 🔥 1. BYPASS API FIRST
+  if (pathname.startsWith("/api")) {
+    return supabaseResponse;
+  }
+
   // ! jangan lupa daftarin semua, klo bisa buatkan constant khusus untuk menyimpan publicPaths
   const publicPaths = [
     "/",
