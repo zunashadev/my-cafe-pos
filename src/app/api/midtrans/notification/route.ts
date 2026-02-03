@@ -3,6 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { ORDER_STATUS } from "@/features/order/constants";
 
 export async function POST(req: Request) {
+  const rawBody = await req.text();
+
+  console.log("MIDTRANS RAW BODY:", rawBody);
+
   const payload = await req.json();
 
   console.log("MIDTRANS PAYLOAD:", payload);
