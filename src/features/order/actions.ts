@@ -355,3 +355,73 @@ export async function generatePayment(
     },
   };
 }
+
+// 🔹 Get Dashboard KPI
+function getMonthRange(date = new Date()) {
+  const start = new Date(date.getFullYear(), date.getMonth(), 1);
+  const end = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+
+  return {
+    start: start.toISOString(),
+    end: end.toISOString(),
+    daysInMonth: end.getDate(),
+  };
+}
+
+export async function getDashboardKPI() {
+  const supabase = await createClient();
+
+  // 📅 Bulan ini
+  const current = getMonthRange(new Date());
+
+  // 📅 Bulan lalu
+  const lastMonthDate = new Date();
+  lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+  const previous = getMonthRange(lastMonthDate);
+
+  // =====================
+  // 1. DATA BULAN INI
+  // =====================
+  const { data: currentOrders } = await supabase
+    .from("orders")
+    .select("total_amount")
+    .eq("status", ORDER_STATUS.PAID)
+    .gte("paid_at", current.start)
+    .lte("paid_at", current.end);
+
+  const totalRevenue =
+    currentOrders?.reduce((sum, o) => sum + (o.total_amount ?? 0), 0) ?? 0;
+
+  const totalOrder = currentOrders?.length ?? 0;
+
+  const averageRevenue =
+    current.daysInMonth > 0 ? totalRevenue / current.daysInMonth : 0;
+
+  // =====================
+  // 2. DATA BULAN LALU
+  // =====================
+  const { data: previousOrders } = await supabase
+    .from("orders")
+    .select("total_amount")
+    .eq("status", ORDER_STATUS.PAID)
+    .gte("paid_at", previous.start)
+    .lte("paid_at", previous.end);
+
+  const previousRevenue =
+    previousOrders?.reduce((sum, o) => sum + (o.total_amount ?? 0), 0) ?? 0;
+
+  // =====================
+  // 3. GROWTH RATE
+  // =====================
+  const growthRate =
+    previousRevenue === 0
+      ? 0
+      : ((totalRevenue - previousRevenue) / previousRevenue) * 100;
+
+  return {
+    totalRevenue,
+    averageRevenue,
+    totalOrder,
+    growthRate,
+  };
+}

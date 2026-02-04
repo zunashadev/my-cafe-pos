@@ -13,26 +13,30 @@ export default function OrdersAnalitycsCard() {
 
   return (
     <div className="space-y-4">
-      {/* Mode Switch */}
-      <div className="flex gap-2">
-        <Button
-          variant={mode === "day" ? "default" : "outline"}
-          onClick={() => setMode("day")}
-        >
-          Day
-        </Button>
-        <Button
-          variant={mode === "week" ? "default" : "outline"}
-          onClick={() => setMode("week")}
-        >
-          Week
-        </Button>
-        <Button
-          variant={mode === "month" ? "default" : "outline"}
-          onClick={() => setMode("month")}
-        >
-          Month
-        </Button>
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-medium">Orders Analitycs</h3>
+
+        {/* Mode Switch */}
+        <div className="flex gap-2">
+          <Button
+            variant={mode === "day" ? "default" : "outline"}
+            onClick={() => setMode("day")}
+          >
+            Day
+          </Button>
+          <Button
+            variant={mode === "week" ? "default" : "outline"}
+            onClick={() => setMode("week")}
+          >
+            Week
+          </Button>
+          <Button
+            variant={mode === "month" ? "default" : "outline"}
+            onClick={() => setMode("month")}
+          >
+            Month
+          </Button>
+        </div>
       </div>
 
       {/* Chart */}

@@ -5,6 +5,7 @@ import { cn, formatRupiah } from "@/lib/utils";
 import { OrderMenuStatus, OrderMenuWithMenu } from "@/features/order/types";
 import { ORDER_MENU_STATUS } from "@/features/order/constants";
 import Image from "next/image";
+import { OrderMenuStatusBadge } from "@/components/shared/order/order-menu-status-badge";
 
 export function tableColumns({
   onEdit,
@@ -91,20 +92,7 @@ export function tableColumns({
       cell: ({ row }) => {
         const status = row.getValue("status") as OrderMenuStatus;
 
-        return (
-          <span
-            className={cn("rounded-md px-2 py-1 font-medium capitalize", {
-              "bg-gray-200 text-gray-800": status === ORDER_MENU_STATUS.PENDING,
-              "bg-orange-500 text-white":
-                status === ORDER_MENU_STATUS.PREPARING,
-              "bg-blue-500 text-white": status === ORDER_MENU_STATUS.READY,
-              "bg-green-500 text-white": status === ORDER_MENU_STATUS.SERVED,
-              "bg-red-500 text-white": status === ORDER_MENU_STATUS.CANCELLED,
-            })}
-          >
-            {status}
-          </span>
-        );
+        return <OrderMenuStatusBadge status={status} />;
       },
     },
     {

@@ -11,6 +11,7 @@ import { ORDER_STATUS } from "@/features/order/constants";
 import { Separator } from "@/components/ui/separator";
 import { UserRole } from "@/features/auth/types";
 import { USER_ROLE } from "@/features/auth/constants";
+import { OrderStatusBadge } from "@/components/shared/order/order-status-badge";
 
 export function tableColumns({
   userRole,
@@ -76,31 +77,31 @@ export function tableColumns({
         const summary = row.original.summary;
 
         return (
-          <div className="space-y-2">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1.5 rounded-sm border p-2">
+            <div className="grid grid-cols-2 gap-2">
               <div className="">
                 <div>
-                  <span className="text-xs">Pending : </span>
-                  <span className="text-xs">{summary?.pending}</span>
+                  <span className="text-sm">Pending : </span>
+                  <span className="text-sm">{summary?.pending}</span>
                 </div>
                 <div>
-                  <span className="text-xs">Preparing : </span>
-                  <span className="text-xs">{summary?.preparing}</span>
+                  <span className="text-sm">Preparing : </span>
+                  <span className="text-sm">{summary?.preparing}</span>
                 </div>
                 <div>
-                  <span className="text-xs">Ready : </span>
-                  <span className="text-xs">{summary?.ready}</span>
+                  <span className="text-sm">Ready : </span>
+                  <span className="text-sm">{summary?.ready}</span>
                 </div>
               </div>
 
               <div className="">
                 <div>
-                  <span className="text-xs">Served : </span>
-                  <span className="text-xs">{summary?.served}</span>
+                  <span className="text-sm">Served : </span>
+                  <span className="text-sm">{summary?.served}</span>
                 </div>
                 <div>
-                  <span className="text-xs">Cancelled : </span>
-                  <span className="text-xs">{summary?.cancelled}</span>
+                  <span className="text-sm">Cancelled : </span>
+                  <span className="text-sm">{summary?.cancelled}</span>
                 </div>
               </div>
             </div>
@@ -125,19 +126,7 @@ export function tableColumns({
       cell: ({ row }) => {
         const status = row.getValue("status") as OrderStatus;
 
-        return (
-          <span
-            className={cn("rounded-md px-2 py-1 font-medium capitalize", {
-              "bg-gray-200 text-gray-800": status === ORDER_STATUS.DRAFT,
-              "bg-blue-500 text-white": status === ORDER_STATUS.CONFIRMED,
-              "bg-purple-500 text-white": status === ORDER_STATUS.SERVED,
-              "bg-green-500 text-white": status === ORDER_STATUS.PAID,
-              "bg-red-500 text-white": status === ORDER_STATUS.CANCELLED,
-            })}
-          >
-            {status}
-          </span>
-        );
+        return <OrderStatusBadge status={status} />;
       },
     },
     {

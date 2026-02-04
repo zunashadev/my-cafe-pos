@@ -189,3 +189,24 @@ export async function getOrdersForAnalytics(): Promise<OrderAnalyticsRow[]> {
 
   return data ?? [];
 }
+
+export async function getTodayOrders(): Promise<OrderWithTable[]> {
+  const supabase = createClient();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, tables(*)")
+    .gte("created_at", today.toISOString())
+    .lt("created_at", tomorrow.toISOString())
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  return data ?? [];
+}

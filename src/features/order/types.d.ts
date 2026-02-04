@@ -9,7 +9,7 @@ export type Order = {
   customer_name?: string | null;
   table_id?: string | null;
   payment_token?: string | null;
-  status?: string;
+  status: OrderStatus;
 };
 
 // 🔹 Order With Table
@@ -82,4 +82,23 @@ export type OrderAnalyticsRow = {
   id: number;
   created_at: string;
   status: OrderStatus;
+};
+
+// 🔹 Today Summary
+type TodaySummary = {
+  totalOrders: number;
+  activeOrders: number;
+  completedOrders: number;
+  cancelledOrders: number;
+  progress: number; // completed / total * 100
+
+  statusBreakdown: {
+    draft: number;
+    confirmed: number;
+    served: number;
+    paid: number;
+    cancelled: number;
+  };
+
+  activeOrderList: OrderWithTable[];
 };

@@ -1,4 +1,4 @@
-import { OrderAnalyticsRow } from "./types";
+import { OrderAnalyticsRow, OrderWithTable, TodaySummary } from "./types";
 
 export function groupOrdersByDay(orders: OrderAnalyticsRow[]) {
   const map = new Map<string, number>();
@@ -52,4 +52,42 @@ export function groupOrdersByMonth(orders: OrderAnalyticsRow[]) {
     label,
     total,
   }));
+}
+
+export function buildTodaySummary(orders: OrderWithTable[]): TodaySummary {
+  const summary: TodaySummary = {
+    totalOrders: orders.length,
+    activeOrders: 0,
+    completedOrders: 0,
+    cancelledOrders: 0,
+    progress: 0,
+    statusBreakdown: {
+      draft: 0,
+      confirmed: 0,
+      served: 0,
+      paid: 0,
+      cancelled: 0,
+    },
+    activeOrderList: [],
+  };
+
+  for (const order of orders) {
+    summary.statusBreakdown[order.status]++;
+
+    if (order.status === "paid") {
+      summary.completedOrders++;
+    } else if (order.status === "cancelled") {
+      summary.cancelledOrders++;
+    } else {
+      summary.activeOrders++;
+      summary.activeOrderList.push(order);
+    }
+  }
+
+  summary.progress =
+    summary.totalOrders === 0
+      ? 0
+      : Math.round((summary.completedOrders / summary.totalOrders) * 100);
+
+  return summary;
 }

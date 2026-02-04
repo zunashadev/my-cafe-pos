@@ -8,10 +8,12 @@ import {
   getOrders,
   getOrdersForAnalytics,
   getOrdersMenusSummary,
+  getTodayOrders,
 } from "./queries";
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {
+  buildTodaySummary,
   groupOrdersByDay,
   groupOrdersByMonth,
   groupOrdersByWeek,
@@ -216,4 +218,16 @@ export function useOrdersAnalytics() {
     isError: query.isError,
     error: query.error,
   };
+}
+
+// 🔹 Use Today Summary
+export function useTodaySummary() {
+  return useQuery({
+    queryKey: ["today-summary"],
+    queryFn: async () => {
+      const orders = await getTodayOrders();
+      return buildTodaySummary(orders);
+    },
+    staleTime: 1000 * 30, // 30 detik
+  });
 }
