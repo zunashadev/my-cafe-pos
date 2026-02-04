@@ -7,7 +7,7 @@ export async function POST(req: Request) {
 
   console.log("MIDTRANS PAYLOAD:", payload);
 
-  const { order_id, transaction_status, gross_amount } = payload;
+  const { midtrans_order_id, transaction_status, gross_amount } = payload;
 
   if (transaction_status === "settlement") {
     const supabase = await createAdminClient();
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         total_amount: Number(gross_amount),
         paid_at: new Date().toISOString(),
       })
-      .eq("order_id", order_id);
+      .eq("midtrans_order_id", midtrans_order_id);
   }
 
   return NextResponse.json({ received: true });

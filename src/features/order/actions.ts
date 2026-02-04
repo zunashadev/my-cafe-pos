@@ -322,7 +322,7 @@ export async function generatePayment(
 
   const parameter = {
     transaction_details: {
-      order_id: midtransOrderId,
+      midtrans_order_id: midtransOrderId,
       gross_amount: parseFloat(grossAmount as string),
     },
     customer_details: {
@@ -342,7 +342,10 @@ export async function generatePayment(
 
   await supabase
     .from("orders")
-    .update({ payment_token: result.token })
+    .update({
+      payment_token: result.token,
+      midtrans_order_id: midtransOrderId,
+    })
     .eq("order_id", orderId);
 
   return {

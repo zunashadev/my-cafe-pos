@@ -9,6 +9,7 @@ export type Order = {
   customer_name?: string | null;
   table_id?: string | null;
   payment_token?: string | null;
+  midtrans_order_id?: string;
   status: OrderStatus;
 };
 
