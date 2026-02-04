@@ -322,7 +322,7 @@ export async function generatePayment(
 
   const parameter = {
     transaction_details: {
-      midtrans_order_id: midtransOrderId,
+      order_id: midtransOrderId,
       gross_amount: parseFloat(grossAmount as string),
     },
     customer_details: {
