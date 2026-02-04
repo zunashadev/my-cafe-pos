@@ -313,6 +313,8 @@ export async function generatePayment(
 
   const supabase = await createClient();
 
+  const midtransOrderId = `${orderId}-${Date.now()}`;
+
   const snap = new midtrans.Snap({
     isProduction: false,
     serverKey: environment.MIDTRANS_SERVER_KEY,
@@ -320,7 +322,7 @@ export async function generatePayment(
 
   const parameter = {
     transaction_details: {
-      order_id: `${orderId}`,
+      order_id: midtransOrderId,
       gross_amount: parseFloat(grossAmount as string),
     },
     customer_details: {
@@ -330,16 +332,11 @@ export async function generatePayment(
 
   const result = await snap.createTransaction(parameter);
 
-  if (result.error_message) {
+  if (!result.token) {
     return {
       status: "error",
-      errors: {
-        ...prevState,
-        _form: [result.error_message],
-      },
-      data: {
-        payment_token: "",
-      },
+      errors: { _form: ["Failed to create transaction"] },
+      data: { payment_token: "" },
     };
   }
 
