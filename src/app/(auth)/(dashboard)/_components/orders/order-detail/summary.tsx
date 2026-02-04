@@ -18,6 +18,16 @@ import { Loader2Icon } from "lucide-react";
 import { startTransition, useActionState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 
+type MidtransSnapResult = {
+  transaction_status: string;
+  order_id: string;
+  payment_type: string;
+  gross_amount: string;
+  transaction_time: string;
+  status_code: string;
+  status_message: string;
+};
+
 export default function Summary({
   order,
   orderMenu,
@@ -62,7 +72,24 @@ export default function Summary({
     }
 
     if (generatePaymentState?.status === "success") {
-      window.snap.pay(generatePaymentState.data.payment_token);
+      window.snap.pay(generatePaymentState.data.payment_token, {
+        onSuccess: (result: MidtransSnapResult) => {
+          toast.success("Payment Success");
+          // redirect ke success page
+          // router.push("/payment/success");
+        },
+        onPending: (result: MidtransSnapResult) => {
+          toast.info("Payment Pending");
+          // biasanya tetap di halaman ini
+        },
+        onError: (result: MidtransSnapResult) => {
+          toast.error("Payment Failed");
+        },
+        onClose: () => {
+          toast.warning("Payment cancelled");
+          // PENTING: JANGAN redirect ke success
+        },
+      });
     }
   }, [generatePaymentState]);
 
