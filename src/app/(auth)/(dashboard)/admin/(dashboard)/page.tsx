@@ -5,6 +5,7 @@ import { getDashboardKPI } from "@/features/order/actions";
 import { formatRupiah } from "@/lib/utils";
 import { KPICard } from "./_components/kpi/kpi-card";
 import TodaySummary from "./_components/today-summary/today-summary";
+import WelcomeCard from "./_components/welcome-card";
 
 export default async function AdminPage() {
   // 🔹 Dashboard KPI
@@ -13,16 +14,13 @@ export default async function AdminPage() {
   return (
     <div className="w-full space-y-6">
       {/* Start : ... */}
-      <div className="bg-muted w-full space-y-2 rounded-md p-6">
-        <h1 className="text-4xl font-semibold">Hi, ...!</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-      </div>
+      <WelcomeCard />
       {/* End : ... */}
 
       <Separator />
 
       {/* Start : ... */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Revenue */}
         <KPICard
           title="Total Revenue"
@@ -58,7 +56,7 @@ export default async function AdminPage() {
       <Separator />
 
       {/* Start : Orders Analitycs */}
-      <div className="grid w-full grid-cols-2 gap-4">
+      <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Orders Analitycs */}
         <div className="w-full space-y-4 rounded-md border p-6">
           <OrdersAnalitycsCard />
