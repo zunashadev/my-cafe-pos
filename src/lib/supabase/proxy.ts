@@ -72,9 +72,40 @@ export async function updateSession(request: NextRequest) {
   }
 
   // ! arahin ke dashboard tergantung role nya?
+  // ✅ Ambil role dari cookie SETELAH getClaims
+  let role: string | undefined;
+
+  const userProfileCookie = request.cookies.get("user_profile")?.value;
+
+  if (userProfileCookie) {
+    try {
+      const userProfile = JSON.parse(userProfileCookie);
+      role = userProfile.role;
+    } catch (e) {
+      console.error("Invalid user_profile cookie", e);
+    }
+  }
+
+  // 🔹 Get Redirect Path by Role
+  function getRedirectPathByRole(role?: string) {
+    switch (role) {
+      case "admin":
+        return "/admin";
+      case "cashier":
+        return "/cashier";
+      case "kitchen":
+        return "/kitchen";
+      default:
+        return "/";
+    }
+  }
+
   if (user && pathname === "/login") {
+    const redirectPath = getRedirectPathByRole(role);
+
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = redirectPath;
+
     return NextResponse.redirect(url);
   }
 
