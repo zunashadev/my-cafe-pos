@@ -12,7 +12,7 @@ export default function Navbar() {
   const profile = useAuthStore((s) => s.profile);
 
   return (
-    <div className="bg-background sticky top-0 z-50 px-56 py-2">
+    <div className="bg-background section-padding-x sticky top-0 z-50 py-2">
       {/* Gradient bottom border */}
       <div className="via-foreground/40 pointer-events-none absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent to-transparent" />
 
